@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+    * {
+        font-family: "Roboto", sans-serif;
+    }
+    :root,
+    body {
+        @apply bg-gradient;
+    }
+}
