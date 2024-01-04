@@ -15,7 +15,7 @@ function DateInfo() {
                 dailyForecast[0]?.dailyDate
             }`}</h2>
             <h4 className="text-white text-base font-normal">
-                Updated as of {dailyForecast[0]?.dailyDate.slice(10, 16)}
+                Updated as of {dailyForecast[0]?.dailyTime}
             </h4>
         </div>
     );

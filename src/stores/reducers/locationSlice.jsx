@@ -1,40 +1,19 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import { options } from "../../utils/constants";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    locations: [],
-    date: null,
+    location: "",
 };
-
-const getPlace = createAsyncThunk("places/fetchPlaces", async () => {
-    const response = await axios.request(options);
-    const location = response.data;
-    return location ? location : {};
-});
 
 export const locationSlice = createSlice({
     name: "location",
     initialState,
     reducers: {
         setLocation: (state, action) => {
-            state.locations.push(...action.payload);
+            state.location = action.payload;
         },
         getLocation: (state) => {
-            return { location: state.locations, date: state.date };
+            return state.location;
         },
-    },
-    extraReducers: (builder) => {
-        builder.addCase(getPlace.pending, (state) => {
-            state.status = "loading";
-        });
-        builder.addCase(getPlace.fulfilled, (state, action) => {
-            state.status = "succeeded";
-            state.locations = action.payload;
-        });
-        builder.addCase(getPlace.rejected, (state) => {
-            state.status = "failed";
-        });
     },
 });
 

@@ -3,7 +3,8 @@ import axios from "axios";
 import { currentWeather, dailyWeather } from "../../utils/constants";
 
 const initialState = {
-    location: "London",
+    location: "",
+    locations: [],
     main: null,
     humidity: null,
     wind: null,
@@ -16,27 +17,40 @@ const initialState = {
 
 export const fetchCurrentWeather = createAsyncThunk(
     "weather/current",
-    async () => {
+    async (location) => {
         const response = await axios.get(
-            `${currentWeather}q=${initialState.location}&units=metric&appid=fb77fce31f3e8f04277a85ac591c52e6`,
+            `${currentWeather}q=${location}&units=metric&appid=fb77fce31f3e8f04277a85ac591c52e6`,
+        );
+        return response.data;
+    },
+);
+export const fetchDailyWeather = createAsyncThunk(
+    "weather/daily",
+    async (location) => {
+        const response = await axios.get(
+            `${dailyWeather}q=${location}&units=metric&appid=fb77fce31f3e8f04277a85ac591c52e6`,
         );
 
         return response.data;
     },
 );
-export const fetchDailyWeather = createAsyncThunk("weather/daily", async () => {
-    const response = await axios.get(
-        `${dailyWeather}q=${initialState.location}&units=metric&appid=fb77fce31f3e8f04277a85ac591c52e6`,
-    );
-
-    return response.data;
-});
 export const weatherSlice = createSlice({
     name: "weather",
     initialState,
     reducers: {
-        showWeather: (state) => {
-            console.log(state.location);
+        showWeather: (state, action) => {
+            state.location = action.payload;
+        },
+        setLocation: (state, action) => {
+            let { location, main, humidity, wind, temperature } = state;
+            location = action.payload;
+            state.locations.push({
+                location,
+                main,
+                humidity,
+                wind,
+                temperature,
+            });
         },
     },
     extraReducers: (builder) => {
@@ -70,6 +84,7 @@ export const weatherSlice = createSlice({
                         temp: Math.floor(action.payload.list[i].main.temp),
                         wind: action.payload.list[i].wind.speed,
                         dailyDate: action.payload.list[i].dt_txt.slice(8, 10),
+                        dailyTime: action.payload.list[i].dt_txt.slice(11, 16),
                     });
                 }
                 state.dailyForecast = tempForecast;
@@ -80,6 +95,6 @@ export const weatherSlice = createSlice({
     },
 });
 
-export const { showWeather } = weatherSlice.actions;
+export const { showWeather, setLocation } = weatherSlice.actions;
 
 export default weatherSlice.reducer;

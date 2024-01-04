@@ -1,31 +1,27 @@
 import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { showWeather } from "../stores/reducers/weatherSlice";
 import {
     fetchCurrentWeather,
     fetchDailyWeather,
 } from "../stores/reducers/weatherSlice";
 
-function Location() {
+function Location({ country, main, humidity, wind, temperature }) {
     const dispatch = useDispatch();
-    const location = useSelector((state) => state.weather.location);
-    const main = useSelector((state) => state.weather.main);
-    const humidity = useSelector((state) => state.weather.humidity);
-    const wind = useSelector((state) => state.weather.wind);
-    const temperature = useSelector((state) => state.weather.temperature);
-
     useEffect(() => {
-        dispatch(fetchCurrentWeather());
-        dispatch(fetchDailyWeather());
-    }, [dispatch]);
-
+        dispatch(fetchCurrentWeather(country));
+        dispatch(fetchDailyWeather(country));
+    }, [dispatch, country]);
     return (
         <NavLink to="/weather">
-            <div className=" w-full h-40 flex items-center p-4 bg-white bg-opacity-25 rounded-3xl">
+            <button
+                type="button"
+                className=" w-full h-40 flex items-center p-4 mb-4 bg-white bg-opacity-25 rounded-3xl"
+                onClick={() => dispatch(showWeather(country))}
+            >
                 <div className="flex flex-col items-start">
-                    <h2 className="text-2xl font-bold text-white">
-                        {location}
-                    </h2>
+                    <h2 className="text-2xl font-bold text-white">{country}</h2>
                     <h4 className="font-medium text-base text-white text-opacity-80 mb-6">
                         {main}
                     </h4>
@@ -52,7 +48,7 @@ function Location() {
                         {Math.floor(temperature)}°C
                     </h>
                 </div>
-            </div>
+            </button>
         </NavLink>
     );
 }
